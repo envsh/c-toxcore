@@ -1720,7 +1720,7 @@ int callback_groupchat_peer_delete(Group_Chats *g_c, int groupnumber, void (*fun
  * return 0 on success.
  * return -1 on failure.
  */
-int callback_groupchat_delete(Group_Chats *g_c, int groupnumber, void (*function)(void *, int32_t))
+int callback_groupchat_delete(Group_Chats *g_c, uint32_t groupnumber, void (*function)(void *, int32_t))
 {
     Group_c *g = get_group_c(g_c, groupnumber);
 

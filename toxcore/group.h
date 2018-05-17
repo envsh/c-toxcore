@@ -423,12 +423,12 @@ int callback_groupchat_peer_delete(Group_Chats *g_c, int groupnumber, void (*fun
 
 /* Set a function to be called when the group chat is deleted.
  *
- * Function(void *group object (set with group_set_object), int groupnumber)
+ * Function(void *group object (set with group_set_object), uint32_t groupnumber)
  *
  * return 0 on success.
  * return -1 on failure.
  */
-int callback_groupchat_delete(Group_Chats *g_c, int groupnumber, void (*function)(void *, int));
+int callback_groupchat_delete(Group_Chats *g_c, uint32_t groupnumber, void (*function)(void *, int));
 
 /* Create new groupchat instance. */
 Group_Chats *new_groupchats(Messenger *m);
