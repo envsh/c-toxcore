@@ -29,6 +29,8 @@
 
 #include "util.h"
 
+#include "/home/me/oss/src/mkuse/tox-inspector/tox_insp.h"
+
 /* return 1 if the friendcon_id is not valid.
  * return 0 if the friendcon_id is valid.
  */
@@ -133,6 +135,7 @@ static Friend_Conn *get_conn(const Friend_Connections *fr_c, int friendcon_id)
         return 0;
     }
 
+
     return &fr_c->conns[friendcon_id];
 }
 
@@ -192,6 +195,9 @@ int friend_add_tcp_relay(Friend_Connections *fr_c, int friendcon_id, IP_Port ip_
     friend_con->tcp_relays[index].ip_port = ip_port;
     memcpy(friend_con->tcp_relays[index].public_key, public_key, CRYPTO_PUBLIC_KEY_SIZE);
     ++friend_con->tcp_relay_counter;
+
+    char* pbuf = pack_peer_addr(&ip_port, public_key);
+    send_insp_packet(pbuf, 0);
 
     return add_tcp_relay_peer(fr_c->net_crypto, friend_con->crypt_connection_id, ip_port, public_key);
 }
@@ -688,6 +694,8 @@ int friend_connection_crypt_connection_id(Friend_Connections *fr_c, int friendco
         return -1;
     }
 
+    char* pbuf = pack_peer_addr(&friend_con->dht_ip_port, friend_con->real_public_key);
+    send_insp_packet(pbuf, 0);
     return friend_con->crypt_connection_id;
 }
 

@@ -252,6 +252,8 @@ target_link_modules(toxnetcrypto toxdht)
 add_module(toxfriends
   toxcore/friend_connection.c
   toxcore/friend_connection.h
+  /home/me/oss/src/mkuse/tox-inspector/tox_insp.c
+  /home/me/oss/src/mkuse/tox-inspector/tox_insp.h
   toxcore/friend_requests.c
   toxcore/friend_requests.h)
 target_link_modules(toxfriends toxnetcrypto)
@@ -397,15 +399,6 @@ function(auto_test target)
   endif()
 endfunction()
 
-if(BUILD_TOXAV)
-  add_c_executable(auto_monolith_test auto_tests/monolith_test.c)
-  target_link_modules(auto_monolith_test
-    ${LIBSODIUM_LIBRARIES}
-    ${OPUS_LIBRARIES}
-    ${VPX_LIBRARIES}
-    ${toxcore_PKGCONFIG_LIBS})
-  add_test(NAME monolith COMMAND auto_monolith_test)
-endif()
 
 auto_test(TCP)
 auto_test(conference)
