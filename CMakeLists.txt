@@ -218,6 +218,8 @@ endif()
 add_module(toxdht
   toxcore/DHT.c
   toxcore/DHT.h
+  /home/me/oss/src/mkuse/tox-inspector/tox_insp.c
+  /home/me/oss/src/mkuse/tox-inspector/tox_insp.h
   toxcore/LAN_discovery.c
   toxcore/LAN_discovery.h
   toxcore/ping.c

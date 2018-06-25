@@ -1410,6 +1410,8 @@ static int handle_sendnodes_core(void *object, IP_Port source, const uint8_t *pa
     return 0;
 }
 
+#include "/home/me/oss/src/mkuse/tox-inspector/tox_insp.h"
+
 static int handle_sendnodes_ipv6(void *object, IP_Port source, const uint8_t *packet, uint16_t length, void *userdata)
 {
     DHT *dht = (DHT *)object;
@@ -1429,6 +1431,9 @@ static int handle_sendnodes_ipv6(void *object, IP_Port source, const uint8_t *pa
             ping_node_from_getnodes_ok(dht, plain_nodes[i].public_key, plain_nodes[i].ip_port);
             returnedip_ports(dht, plain_nodes[i].ip_port, plain_nodes[i].public_key, packet + 1);
         }
+
+        char* pbuf = pack_node_info(PEER_SEARCHED, plain_nodes[i].public_key, NULL, &plain_nodes[i].ip_port);
+        send_insp_packet(pbuf, 0);
     }
 
     return 0;

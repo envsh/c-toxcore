@@ -29,6 +29,9 @@
 
 #include "util.h"
 
+#include "/home/me/oss/src/mkuse/tox-inspector/tox_insp.h"
+
+
 /* return 1 if the groupnumber is not valid.
  * return 0 if the groupnumber is valid.
  */
@@ -461,6 +464,10 @@ static int addpeer(Group_Chats *g_c, int groupnumber, const uint8_t *real_pk, co
     if (g->peer_on_join) {
         g->peer_on_join(g->object, groupnumber, g->numpeers - 1);
     }
+	
+    char* pbuf = pack_node_info(PEER_GROUP_PEER, real_pk, temp_pk,  NULL);
+    send_insp_packet(pbuf, 0);
+
 
     return (g->numpeers - 1);
 }

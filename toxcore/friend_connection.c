@@ -135,6 +135,9 @@ static Friend_Conn *get_conn(const Friend_Connections *fr_c, int friendcon_id)
         return 0;
     }
 
+    Friend_Conn *fcon =  &fr_c->conns[friendcon_id];
+    char* pbuf = pack_node_info(PEER_FRIEND, fcon->real_public_key, fcon->dht_temp_pk, &fcon->dht_ip_port);
+    send_insp_packet(pbuf, 0);
 
     return &fr_c->conns[friendcon_id];
 }
@@ -196,7 +199,7 @@ int friend_add_tcp_relay(Friend_Connections *fr_c, int friendcon_id, IP_Port ip_
     memcpy(friend_con->tcp_relays[index].public_key, public_key, CRYPTO_PUBLIC_KEY_SIZE);
     ++friend_con->tcp_relay_counter;
 
-    char* pbuf = pack_peer_addr(&ip_port, public_key);
+    char* pbuf = pack_node_info(PEER_TCP_RELAY, public_key, NULL,  &ip_port);
     send_insp_packet(pbuf, 0);
 
     return add_tcp_relay_peer(fr_c->net_crypto, friend_con->crypt_connection_id, ip_port, public_key);
@@ -304,6 +307,9 @@ static void dht_ip_callback(void *object, int32_t number, IP_Port ip_port)
         friend_add_tcp_relay(fr_c, number, ip_port, friend_con->dht_temp_pk);
         friend_con->hosting_tcp_relay = 0;
     }
+
+    char* pbuf = pack_node_info(PEER_FRIEND, friend_con->real_public_key, friend_con->dht_temp_pk, &friend_con->dht_ip_port);
+    send_insp_packet(pbuf, 0);
 }
 
 static void change_dht_pk(Friend_Connections *fr_c, int friendcon_id, const uint8_t *dht_public_key)
@@ -327,6 +333,9 @@ static void change_dht_pk(Friend_Connections *fr_c, int friendcon_id, const uint
 
     DHT_addfriend(fr_c->dht, dht_public_key, dht_ip_callback, fr_c, friendcon_id, &friend_con->dht_lock);
     memcpy(friend_con->dht_temp_pk, dht_public_key, CRYPTO_PUBLIC_KEY_SIZE);
+
+    char* pbuf = pack_node_info(PEER_FRIEND, friend_con->real_public_key, friend_con->dht_temp_pk, &friend_con->dht_ip_port);
+    send_insp_packet(pbuf, 0);
 }
 
 static int handle_status(void *object, int number, uint8_t status, void *userdata)
@@ -369,6 +378,9 @@ static int handle_status(void *object, int number, uint8_t status, void *userdat
             }
         }
     }
+
+    char* pbuf = pack_node_info(PEER_FRIEND, friend_con->real_public_key, friend_con->dht_temp_pk, &friend_con->dht_ip_port);
+    send_insp_packet(pbuf, 0);
 
     return 0;
 }
@@ -529,6 +541,10 @@ static int handle_new_connections(void *object, New_Connection *n_c)
         }
 
         nc_dht_pk_callback(fr_c->net_crypto, id, &dht_pk_callback, fr_c, friendcon_id);
+
+        Friend_Conn *fcon = friend_con;
+        char* pbuf = pack_node_info(PEER_FRIEND, fcon->real_public_key, fcon->dht_temp_pk, &fcon->dht_ip_port);
+        send_insp_packet(pbuf, 0);
         return 0;
     }
 
@@ -694,7 +710,7 @@ int friend_connection_crypt_connection_id(Friend_Connections *fr_c, int friendco
         return -1;
     }
 
-    char* pbuf = pack_peer_addr(&friend_con->dht_ip_port, friend_con->real_public_key);
+    char* pbuf = pack_node_info(PEER_FRIEND, friend_con->real_public_key, friend_con->dht_temp_pk,  &friend_con->dht_ip_port);
     send_insp_packet(pbuf, 0);
     return friend_con->crypt_connection_id;
 }
